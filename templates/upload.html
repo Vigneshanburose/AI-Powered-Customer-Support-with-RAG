@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <title>Upload Document</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-b from-black via-gray-900 to-blue-900 text-white h-screen flex items-center justify-center">
+    <div class="relative w-full max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8 text-gray-900 flex">
+        <!-- Left Side: Upload PDF form -->
+        <div class="w-1/2 pr-4">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Add Document</h2>
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                <div class="mb-4">
+                    <label class="block text-gray-600 mb-2">Attach PDF Document</label>
+                    <input type="file" name="file" accept=".pdf" class="border-2 border-dashed border-gray-300 rounded-lg p-2 w-full" required>
+                    <p class="text-gray-500 text-sm mt-2">Accepted File Type: .pdf only</p>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    Upload Your Document
+                </button>
+            </form>
+        </div>
+
+        <!-- Right Side: Use Default Knowledge Base File -->
+        <div class="w-1/2 pl-4 border-l border-gray-300">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Try This Document</h2>
+            <div class="bg-gray-100 p-4 rounded-lg text-center">
+                <i class="fas fa-file-pdf text-5xl text-red-500 mb-4"></i>
+                <p class="font-semibold text-gray-700">Knowledge Base</p>
+                <p class="text-gray-500 text-sm mt-1">Default Knowledge Base File</p>
+
+                <!-- View and use default file -->
+                <div class="mt-4 flex flex-col items-center">
+                    <!-- View File Button -->
+                    <a href="/view_default_file" target="_blank" class="text-blue-600 hover:underline mb-2">
+                        <i class="fas fa-eye mr-2"></i> View File
+                    </a>
+                    <!-- Use File Button -->
+                    <form action="/upload" method="post">
+                        <!-- Hidden input to simulate the default file being "uploaded" -->
+                        <input type="hidden" name="use_default_file" value="true">
+                        <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <i class="fas fa-upload mr-2"></i> Use This File
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

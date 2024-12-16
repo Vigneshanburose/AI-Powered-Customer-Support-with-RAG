@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        .chat-box {
+            height: calc(400px - 2rem);
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 flex items-center justify-center min-h-screen">
+    <div class="bg-white w-80 rounded-lg shadow-lg flex flex-col">
+        <div class="flex items-center p-4 bg-blue-600 rounded-t-lg">
+            <div class="bg-white p-2 rounded-full">
+                <i class="fas fa-robot text-blue-600"></i>
+            </div>
+            <h2 class="ml-2 text-white font-bold">AI Chatbot</h2>
+        </div>
+        <div class="chat-box p-4 space-y-4">
+            <!-- Chat messages will be dynamically added here -->
+        </div>
+        <div class="p-4">
+            <div class="flex">
+                <input type="text" id="user-input" placeholder="Type your message..." class="flex-grow border rounded-lg p-2 mr-2">
+                <button id="send-button" class="bg-blue-600 text-white rounded-lg px-4">Send</button>
+            </div>
+            <button id="embed-button" class="mt-2 bg-green-600 text-white rounded-lg px-4">Embed</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("send-button").addEventListener("click", async function() {
+            const inputField = document.getElementById("user-input");
+            const query = inputField.value.trim();
+
+            if (query) {
+                // Display user message
+                addMessage(query, 'user-message');
+                inputField.value = ''; // Clear input field
+
+                // Send the user query to the backend
+                const response = await fetch('/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ query: query })
+                });
+
+                const data = await response.json();
+                const answer = data.answer || "Sorry, I don't have the answer to that.";
+
+                // Display AI response
+                addMessage(answer, 'bot-message');
+            }
+        });
+
+        function addMessage(text, className) {
+            const chatBox = document.querySelector(".chat-box");
+            const messageDiv = document.createElement("div");
+            messageDiv.className = `bg-gray-100 p-3 rounded-lg ${className === 'user-message' ? '' : 'bg-blue-500 text-white'}`;
+            messageDiv.innerHTML = `<p class="font-bold">${className === 'user-message' ? 'User:' : 'AI Chatbot:'}</p><p>${text}</p>`;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom
+        }
+
+        // Enable sending message with Enter key
+        document.getElementById("user-input").addEventListener("keypress", function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById("send-button").click();
+            }
+        });
+
+        // Embed button functionality
+        document.getElementById("embed-button").addEventListener("click", function() {
+            const embedCode = `
+<div id="chatbot-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
+    <button id="open-chatbot" style="background-color: #007bff; color: white; border: none; border-radius: 5px; padding: 10px;">
+        Chat with AI
+    </button>
+    <iframe id="chatbot-iframe" src="http://127.0.0.1:5000/chatbot" style="display:none; border: none; width: 400px; height: 500px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);"></iframe>
+</div>
+
+<script>
+    document.getElementById('open-chatbot').onclick = function() {
+        const iframe = document.getElementById('chatbot-iframe');
+        iframe.style.display = iframe.style.display === 'none' ? 'block' : 'none';
+    };
+`.trim();
+
+            navigator.clipboard.writeText(embedCode).then(() => {
+                alert("Embed code copied to clipboard!");
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        });
+    </script>
+</body>
+</html>
